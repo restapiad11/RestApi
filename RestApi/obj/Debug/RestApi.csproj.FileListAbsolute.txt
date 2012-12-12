@@ -34,3 +34,6 @@ C:\VSProjects\Programvaruutveckling\RestApi\RestApi\RestApi\bin\System.Web.WebPa
 C:\VSProjects\Programvaruutveckling\RestApi\RestApi\RestApi\obj\Debug\RestApi.csprojResolveAssemblyReference.cache
 C:\VSProjects\Programvaruutveckling\RestApi\RestApi\RestApi\obj\Debug\RestApi.dll
 C:\VSProjects\Programvaruutveckling\RestApi\RestApi\RestApi\obj\Debug\RestApi.pdb
+C:\VSProjects\RestApi\RestApi\obj\Debug\RestApi.csprojResolveAssemblyReference.cache
+C:\VSProjects\RestApi\RestApi\obj\Debug\RestApi.dll
+C:\VSProjects\RestApi\RestApi\obj\Debug\RestApi.pdb

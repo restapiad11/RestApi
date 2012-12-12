@@ -7,56 +7,101 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using RestApi.Repository.Abstract;
+using RestApi.DAL;
+    using System.Data;
+    using System.Data.Entity.Infrastructure;
 
-    public class UsersController : ApiController
+    public class UserController : ApiController
     {
-        private IRepository<User> _userRepo;
+        private SongContext db = new SongContext();
 
-        public UsersController(IRepository<User> users)
+        // GET api/Song
+        public IEnumerable<User> GetSongs()
         {
-            _userRepo = users;
+            return db.Users.AsEnumerable();
         }
 
-        public IEnumerable<User> GetAllUsers()
+        // GET api/Song/5
+        public User GetSong(int id)
         {
-            return _userRepo.FindAll();
-        }
-
-        public User GetUserById(int id)
-        {
-            var user = _userRepo.FindByID(id);
-            if (user == null)
+            User song = db.Users.Find(id);
+            if (song == null)
             {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
+                throw new HttpResponseException(Request.CreateResponse(HttpStatusCode.NotFound));
             }
-            return user;
+
+            return song;
         }
 
-        public IEnumerable<User> GetUsersByAdmin(string admin)
+        // PUT api/Song/5
+        public HttpResponseMessage PutSong(int id, User song)
         {
-            return _userRepo.FindAll().Where(u => u.Admin == 1);
+            if (ModelState.IsValid && id == song.ID)
+            {
+                db.Entry(song).State = EntityState.Modified;
+
+                try
+                {
+                    db.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound);
+                }
+
+                return Request.CreateResponse(HttpStatusCode.OK, song);
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
         }
-        /*
-        public ActionResult Create()
+
+        // POST api/Song
+        public HttpResponseMessage PostSong(User song)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                db.Users.Add(song);
+                db.SaveChanges();
+
+                HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created, song);
+                response.Headers.Location = new Uri(Url.Link("DefaultApi", new { id = song.ID }));
+                return response;
+            }
+            else
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
         }
-        public ActionResult Update(int id)
+
+        // DELETE api/Song/5
+        public HttpResponseMessage DeleteSong(int id)
         {
-            return View();
+            User song = db.Users.Find(id);
+            if (song == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
+
+            db.Users.Remove(song);
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return Request.CreateResponse(HttpStatusCode.NotFound);
+            }
+
+            return Request.CreateResponse(HttpStatusCode.OK, song);
         }
-        public ActionResult Delete(int id)
+
+        protected override void Dispose(bool disposing)
         {
-            return View();
+            db.Dispose();
+            base.Dispose(disposing);
         }
-        public ActionResult LogOn(string email, string password)
-        {
-            return View();
-        }
-        public ActionResult LogOn(string email)
-        {
-            return View();
-        }*/
     }
 }
